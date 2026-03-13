@@ -3,12 +3,12 @@ package com.rishi.AuthanticationApplication.services.impl;
 import com.rishi.AuthanticationApplication.dtos.UserDto;
 import com.rishi.AuthanticationApplication.exceptions.ResourceNotFoundException;
 import com.rishi.AuthanticationApplication.helpers.UserHelper;
+import com.rishi.AuthanticationApplication.mappers.UserMapper;
 import com.rishi.AuthanticationApplication.model.User;
 import com.rishi.AuthanticationApplication.other.Provider;
 import com.rishi.AuthanticationApplication.repository.UserRepository;
 import com.rishi.AuthanticationApplication.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
+    private final UserMapper userMapper;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -31,17 +31,18 @@ public class UserServiceImpl implements UserService {
 
         }
 
-        User user = modelMapper.map(userDto, User.class);
+        User user = userMapper.toEntity(userDto);
         user.setProvider(userDto.getProvider() !=  null ? userDto.getProvider() : Provider.LOCAL);
         User savedUser = userRepository.save(user);
 
-        return modelMapper.map(savedUser, UserDto.class);
+        return userMapper.toDto(savedUser);
     }
 
     @Override
     public UserDto getUserByEmail(String email) {
-        userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found with email id.."));
-        return modelMapper.map(userRepository.findByEmail(email), UserDto.class);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email id.."));
+        return userMapper.toDto(user);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class UserServiceImpl implements UserService {
         existingUser.setEnable(userDto.isEnable());
         existingUser.setUpdatedAt(Instant.now());
         User updatedUser = userRepository.save(existingUser);
-        return modelMapper.map(updatedUser, UserDto.class);
+        return userMapper.toDto(updatedUser);
     }
 
     @Override
@@ -70,14 +71,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(String id) {
         User user = userRepository.findById(UserHelper.parseUUID(id)).orElseThrow(() -> new ResourceNotFoundException("User not found with given id"));
-        return modelMapper.map(user, UserDto.class);
+        return userMapper.toDto(user);
     }
 
     @Override
     public Iterable<UserDto> getAllUsers() {
-
-        return userRepository.findAll().stream().map(
-                user -> modelMapper.map(user, UserDto.class)
-        ).toList();
+        return userMapper.toDtoList(userRepository.findAll());
     }
 }

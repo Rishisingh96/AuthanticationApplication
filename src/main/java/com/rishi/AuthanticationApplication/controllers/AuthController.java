@@ -1,6 +1,10 @@
 package com.rishi.AuthanticationApplication.controllers;
 
-import com.rishi.AuthanticationApplication.dtos.*;
+import com.rishi.AuthanticationApplication.dtos.AuthRequest;
+import com.rishi.AuthanticationApplication.dtos.AuthResponse;
+import com.rishi.AuthanticationApplication.dtos.MessageResponse;
+import com.rishi.AuthanticationApplication.dtos.RegisterRequest;
+import com.rishi.AuthanticationApplication.dtos.RegisterResponse;
 import com.rishi.AuthanticationApplication.model.Role;
 import com.rishi.AuthanticationApplication.model.User;
 import com.rishi.AuthanticationApplication.repository.RoleRepository;
