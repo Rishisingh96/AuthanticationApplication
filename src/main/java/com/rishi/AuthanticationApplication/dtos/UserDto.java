@@ -1,8 +1,6 @@
 package com.rishi.AuthanticationApplication.dtos;
 
-import com.rishi.AuthanticationApplication.model.Role;
 import com.rishi.AuthanticationApplication.other.Provider;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
@@ -22,11 +20,19 @@ public class UserDto {
 
     private String email;
     private String password;
+
+    @Builder.Default
     private boolean enable = true;
+
+    @Builder.Default
     private Instant createdAt = Instant.now();
+
+    @Builder.Default
     private Instant updatedAt = Instant.now();
 
+    @Builder.Default
     private Provider provider = Provider.LOCAL;
 
+    @Builder.Default
     private Set<RoleDto> roles = new HashSet<>();
 }
